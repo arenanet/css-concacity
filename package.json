@@ -1,0 +1,12 @@
+{
+  "name": "css-concatify",
+  "version": "0.0.0",
+  "description": "Concat CSS using require statements",
+  "main": "index.js",
+  "author" : "Joshua Galvin <joshg@arena.net>",
+  "license": "MIT",
+  "dependencies": {
+    "through2": "^2.0.0"
+  }
+}
+
