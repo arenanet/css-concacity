@@ -1,6 +1,7 @@
 "use strict";
 
 var path = require("path"),
+    concat = require("concat-stream"),
     through2 = require("through2"),
     fs = require("fs");
 
@@ -38,7 +39,7 @@ module.exports = function(browserify, options) {
     }, { global : true });
 
     browserify.on("bundle", function(bundle) {
-        bundle.on("end", function() {
+        bundle.pipe(concat(function() {
             if(settings.cssOut) {
                 fs.writeFile(
                     path.join(settings.rootDir, settings.cssOut),
@@ -50,6 +51,6 @@ module.exports = function(browserify, options) {
                     }
                 );
             }
-        });
+        }));
     });
 };
