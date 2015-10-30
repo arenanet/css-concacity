@@ -3,6 +3,7 @@
 var path = require("path"),
     concat = require("concat-stream"),
     through2 = require("through2"),
+    regRel = /\.\//g,
     fs = require("fs");
 
 function reducer(files) {
@@ -21,7 +22,7 @@ module.exports = function(browserify, options) {
             var data = files[file];
             delete files[file];
             return buffer + "\r\n" + data;
-        }, "");
+        }, "").replace(regRel, "../", "g");
     }
 
     options = options || {};
