@@ -13,7 +13,16 @@ function reducer(files) {
 
 module.exports = function(browserify, options) {
     var settings = {},
+        bundles = {},
         files = {};
+
+    function reduceBundle(bundleFiles) {
+        return bundleFiles.reduce(function(buffer, file) {
+            var data = files[file];
+            delete files[file];
+            return buffer + "\r\n" + data;
+        }, "");
+    }
 
     options = options || {};
 
@@ -37,6 +46,31 @@ module.exports = function(browserify, options) {
             callback();
         });
     }, { global : true });
+
+    browserify.on("factor.pipeline", function(file, pipeline) {
+        bundles[file] = [];
+
+        pipeline.unshift(through2.obj(function(obj, enc, done) {
+            if(path.extname(obj.file) === ".css") {
+                bundles[file].push(obj.file);
+            }
+            this.push(obj);
+            done();
+        }, function(done) {
+            // all done
+            fs.writeFile(
+                path.join(settings.rootDir, path.dirname(settings.cssOut), path.basename(file, ".js") + ".css"),
+                reduceBundle(bundles[file]),
+                function(err) {
+                    if(err) {
+                        browserify.emit("error", err);
+                    }
+                }
+            );
+            this.push(null);
+            done();
+        }));
+    });
 
     browserify.on("bundle", function(bundle) {
         bundle.pipe(concat(function() {
