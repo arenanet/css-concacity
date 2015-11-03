@@ -6,10 +6,10 @@ Supports Factor-Bundle w/o any configuration changes.
 ## Example Usage
 ```javascript
   var browserify = require("browserify"),
-    fs         = require("fs"),
-    path       = require("path"),
-    cssModule  = require("css-concatify"),
-    rebundle   = require("factor-bundle");
+    fs           = require("fs"),
+    path         = require("path"),
+    cssModule    = require("css-concatify"),
+    rebundle     = require("factor-bundle");
     
   b = browserify();
   
