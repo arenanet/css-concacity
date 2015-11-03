@@ -3,26 +3,41 @@
 var path = require("path"),
     concat = require("concat-stream"),
     through2 = require("through2"),
-    regRel = /\.\//g,
-    fs = require("fs");
-
-function reducer(files) {
-    return Object.keys(files).reduce(function(buffer, key) {
-        return buffer + "\r\n" + files[key];
-    }, "").replace(regRel, "../", "g");
-}
+    fs = require("fs"),
+    rework = require("rework"),
+    reworkUrl = require("rework-plugin-url");
 
 module.exports = function(browserify, options) {
     var settings = {},
         bundles = {},
         files = {};
 
+    // rewrite relative urls
+    function reworkUrls(css, filePath) {
+        var actualPath = path.join(settings.rootDir, path.dirname(settings.cssOut));
+
+        return rework(css)
+            .use(reworkUrl(function(url) {
+                var resolved = path.resolve(path.dirname(filePath), url);
+                return path.isAbsolute(url) ? url : path.relative(actualPath, resolved);
+            }))
+            .toString();
+    }
+
+    // specific bundles
     function reduceBundle(bundleFiles) {
         return bundleFiles.reduce(function(buffer, file) {
             var data = files[file];
             delete files[file];
-            return buffer + "\r\n" + data;
-        }, "").replace(regRel, "../", "g");
+            return buffer + "\r\n" + reworkUrls(data, file);
+        }, "");
+    }
+
+    // common.js
+    function reducer(filesToReduce) {
+        return Object.keys(filesToReduce).reduce(function(buffer, key) {
+            return buffer + "\r\n" + reworkUrls(files[key], key);
+        }, "");
     }
 
     options = options || {};
