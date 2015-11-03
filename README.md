@@ -9,9 +9,12 @@ Supports Factor-Bundle w/o any configuration changes.
     fs           = require("fs"),
     path         = require("path"),
     cssModule    = require("css-concatify"),
-    rebundle     = require("factor-bundle");
+    rebundle     = require("factor-bundle"),
+    inputs       = ["foo.js", "bar.js"];
     
   b = browserify();
+  
+  b.add(inputs);
   
   b.plugin(cssModule, {
     global  : true,
@@ -20,7 +23,7 @@ Supports Factor-Bundle w/o any configuration changes.
   });
   
   b.plugin(rebundle, {
-    outputs : ["foo.js", "bar.js"].map(function(page) {
+    outputs : inputs.map(function(page) {
         return path.join("./gen", path.basename(page));
     }),
     global : true
