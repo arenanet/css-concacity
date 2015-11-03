@@ -76,7 +76,7 @@ module.exports = function(browserify, options) {
             // all done
             fs.writeFile(
                 path.join(settings.rootDir, path.dirname(settings.cssOut), path.basename(file, ".js") + ".css"),
-                reduceBundle(bundles[file]),
+                reduceBundle(bundles[file]) + "\r\n",
                 function(err) {
                     if(err) {
                         browserify.emit("error", err);
@@ -93,7 +93,7 @@ module.exports = function(browserify, options) {
             if(settings.cssOut) {
                 fs.writeFile(
                     path.join(settings.rootDir, settings.cssOut),
-                    reducer(files),
+                    reducer(files) + "\r\n",
                     function(err) {
                         if(err) {
                             browserify.emit("error", err);
