@@ -9,7 +9,7 @@ var path = require("path"),
 function reducer(files) {
     return Object.keys(files).reduce(function(buffer, key) {
         return buffer + "\r\n" + files[key];
-    }, "");
+    }, "").replace(regRel, "../", "g");
 }
 
 module.exports = function(browserify, options) {
