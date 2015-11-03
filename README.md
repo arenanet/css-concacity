@@ -31,11 +31,10 @@ Supports Factor-Bundle w/o any configuration changes.
   
   b.bundle(function(err, res) {
     if(err) {
-        config.log("error", err);
+        console.log("error", err);
     } else {
         fs.writeFileSync(exit, res);
     }
-    done();
   });
 ```
 ## License
