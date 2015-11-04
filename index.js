@@ -5,7 +5,8 @@ var path = require("path"),
     through2 = require("through2"),
     fs = require("fs"),
     rework = require("rework"),
-    reworkUrl = require("rework-plugin-url");
+    reworkUrl = require("rework-plugin-url"),
+    findSlash = /\\/g;
 
 module.exports = function(browserify, options) {
     var settings = {},
@@ -19,7 +20,9 @@ module.exports = function(browserify, options) {
         return rework(css)
             .use(reworkUrl(function(url) {
                 var resolved = path.resolve(path.dirname(filePath), url);
-                return path.isAbsolute(url) ? url : path.relative(actualPath, resolved);
+                return path.isAbsolute(url) ?
+                    url :
+                    path.relative(actualPath, resolved).replace(findSlash, "/");
             }))
             .toString();
     }
@@ -58,10 +61,11 @@ module.exports = function(browserify, options) {
             callback();
         }, function(callback) {
             files[filename] = buffer;
-            this.push("");
+            this.push("module.exports=\"" + path.basename(filename) + "\"");
+            this.push(null);
             callback();
         });
-    }, { global : true });
+    });
 
     browserify.on("factor.pipeline", function(file, pipeline) {
         bundles[file] = [];
