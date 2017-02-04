@@ -1,5 +1,7 @@
 # css-concatify
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/arenanet/css-concatify.svg)](https://greenkeeper.io/)
+
 A browserify plugin to concat required CSS. It handles relative URLs and basically a simpler version of browserify-css.
 Supports Factor-Bundle w/o any configuration changes.
 
